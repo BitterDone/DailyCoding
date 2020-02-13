@@ -1,5 +1,8 @@
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
+// https://www.youtube.com/watch?v=suj1ro8TIVY
 public class Main {
     public static void main(String[] args) {
         Node node = new Node("root",
@@ -15,8 +18,8 @@ public class Main {
         // serialized: root left left.left null null  null  right null null
         // serialized: root left left.left right
 
-//        String test = w.deserialize(serialized).left.left.val;
-//        System.out.println("Expect true: " + test.equalsIgnoreCase("left.left"));
+        String test = w.deserialize(serialized).left.left.val;
+        System.out.println("Expect true: " + test.equalsIgnoreCase("left.left"));
     }
 }
 
@@ -24,11 +27,9 @@ class Workload {
     public String serialize(Node n) {
         String serld = "null";
         if (null != n) {
-            serld = String.valueOf(n.val) + " "
-//                + String.valueOf(n.left.val)
-//                + String.valueOf(n.right.val);
+            serld = n.val + " "
                     + serialize(n.left) + " "
-                    + serialize(n.right) + " ";
+                    + serialize(n.right); // no trailing  + " " after the right leaf
         }
 
         return serld;
@@ -38,16 +39,28 @@ class Workload {
         // root left left.left null null  null  right null null
         String[] parts = s.split(" ");
 
-        if (parts[0].equalsIgnoreCase("null")) {
-            return new Node();
-        }
+        LinkedList<String> queue = new LinkedList<>();
+        queue.addAll(Arrays.asList(s.split(" ")));
 
-        Node n = new Node(parts[0],
-                deserialize(String.join(" ", parts)),
-                deserialize(String.join(" ", parts))
-        );
-        return new Node();
-    } // return a joined string array of next stuff?
+        Node root = deserializeHelper(queue);
+        return root;
+    }
+
+    public Node deserializeHelper(LinkedList<String> queue) {
+        try {
+            String pop = queue.removeFirst();
+            if (!pop.equalsIgnoreCase("null")) {
+                Node first = new Node(pop);
+                first.left = deserializeHelper(queue);
+                first.right = deserializeHelper(queue);
+
+                return first;
+            }
+        } catch (NoSuchElementException e) {
+            System.out.println("NoSuchElementException");
+        }
+        return null;
+    }
 }
 
 class Node {
