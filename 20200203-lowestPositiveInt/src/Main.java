@@ -16,16 +16,17 @@ public class Main {
 
 class Workload {
     public int lowestPosInt(int[] nums) {
-        if (nums == null || nums.length < 1) return 0; // null or []
-        if (nums.length == 1 && nums[0] < 0) return 0; // -1
-        if (nums.length == 1 && nums[0] >= 0) return nums[0]+1; // 0 1
+        if (nums == null || nums.length < 1) return 0; // null or [] // is 0 ok?
+        if (nums.length == 1 && nums[0] < 0) return 0; // -1 // is 0 ok?
+        if (nums.length == 1 && nums[0] >= 0) return nums[0]+1; // 0 1 // is 0 ok?
 
         Arrays.sort(nums);
         int step = 0;
         while (step < nums.length-1) {
-            int diff = nums[step+1] - nums[step];
-            System.out.println("step: " + step + " nums[" + step + "]: " + nums[step] + " diff: " + diff);
-            if (nums[step] > 0 && diff > 1) break;
+            int diff = -1;
+            if (nums[step] > 0) diff = nums[step+1] - nums[step]; // > -1? is 0 ok?
+//            System.out.println("step: " + step + " nums[" + step + "]: " + nums[step] + " diff: " + diff);
+            if (diff > 1) break;
             step++;
         }
 
